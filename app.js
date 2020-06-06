@@ -50,7 +50,7 @@ wsServer.on('request', function(request) {
 	connection.on('message', function(message) {
 		const { utf8Data } = message
 		const { msg } = JSON.parse(utf8Data)
-		publish_client.publish('/light', msg)
+		publish_client.publish('/light', 'HELLOOOOOO')
 	})
 
 	connection.on('close', function(connection) {
