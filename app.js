@@ -40,7 +40,7 @@ publish_client.on('connect', () => {
 })
 
 wsServer = new WebSocketServer({
-	httpServer: https.createServer().listen(PORT)
+	httpServer: http.createServer().listen(PORT)
 })
 
 // WebSocket server
