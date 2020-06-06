@@ -1,6 +1,6 @@
 const WebSocketServer = require('websocket').server
 const mqtt = require('mqtt')
-const https = require('https')
+const http = require('http')
 const PORT = process.env.PORT || 8080
 const WEBSOCKET_URL_PUBLISH = 'http://13.251.51.242:1883'
 const WEBSOCKET_URL_SUBSCRIBE = 'http://13.82.183.46:1883'
@@ -40,7 +40,7 @@ publish_client.on('connect', () => {
 })
 
 wsServer = new WebSocketServer({
-	httpServer: https.createServer().listen(PORT)
+	httpServer: http.createServer().listen(PORT)
 })
 
 // WebSocket server
