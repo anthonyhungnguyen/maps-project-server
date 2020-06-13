@@ -2,8 +2,7 @@ const WebSocketServer = require('websocket').server
 const mqtt = require('mqtt')
 const http = require('http')
 const PORT = process.env.PORT || 8080
-const WEBSOCKET_URL_PUBLISH = 'http://13.251.51.242:1883'
-const WEBSOCKET_URL_SUBSCRIBE = 'http://13.82.183.46:1883'
+const WEBSOCKET_URL = 'http://13.76.250.158:1883'
 const OPTIONS = {
 	connectTimeout: 4000,
 
@@ -16,26 +15,28 @@ const OPTIONS = {
 	clean: true
 }
 
-const publish_client = mqtt.connect(WEBSOCKET_URL_PUBLISH, OPTIONS)
-const subscribe_client = mqtt.connect(WEBSOCKET_URL_SUBSCRIBE, OPTIONS)
+const client = mqtt.connect(WEBSOCKET_URL, OPTIONS)
 
-subscribe_client.on('connect', () => {
+client.on('connect', () => {
 	console.log('Connect Success')
-	subscribe_client.subscribe('/hello')
+	client.subscribe('Topic/GPS')
 })
 
-subscribe_client.on('message', (topic, message) => {
-	let newMessage = message.toString().split(' ')
-	console.log('Received form', topic, ':', message.toString().split(' '))
+client.on('message', (topic, message) => {
+	const receivedData = JSON.parse(message)
+	const newMessage = [ receivedData[0]['values'][0], receivedData[0]['values'][1] ]
+	console.log('Received form', newMessage)
 	wsServer.broadcast(
 		JSON.stringify({
-			latitude: newMessage[0],
-			longitude: newMessage[1]
+			latitude: newMessage[1],
+			longitude: newMessage[0]
+			// latitude: 16.060648,
+			// longitude: 108.222513
 		})
 	)
 })
 
-publish_client.on('connect', () => {
+client.on('connect', () => {
 	console.log('Publish Success')
 })
 
@@ -50,7 +51,25 @@ wsServer.on('request', function(request) {
 	connection.on('message', function(message) {
 		const { utf8Data } = message
 		const { msg } = JSON.parse(utf8Data)
-		publish_client.publish('/light', 'TURN LIGHT ON')
+		if (msg === 'TURN LIGHT ON') {
+			client.publish(
+				'Topic/LightD',
+				JSON.stringify([
+					{
+						values: [ '1', '100' ]
+					}
+				])
+			)
+		} else {
+			client.publish(
+				'Topic/LightD',
+				JSON.stringify([
+					{
+						values: [ '0', '0' ]
+					}
+				])
+			)
+		}
 	})
 
 	connection.on('close', function(connection) {
