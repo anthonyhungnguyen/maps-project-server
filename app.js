@@ -5,7 +5,12 @@ const express = require('express')
 const socketio = require('socket.io')
 const cors = require('cors')
 const PORT = 8080
-const WEBSOCKET_URL = 'http://13.76.250.158:1883'
+
+// HOME
+const WEBSOCKET_URL = 'http://13.82.183.46:1883'
+
+// TEACHER
+// const WEBSOCKET_URL = 'http://13.76.250.158:1883'
 const OPTIONS = {
 	connectTimeout: 4000,
 
